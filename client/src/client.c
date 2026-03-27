@@ -26,7 +26,7 @@ int main(void)
 	/* ---------------- ARCHIVOS DE CONFIGURACION ---------------- */
 
 	config = iniciar_config();
-	char * valorConfig = config_get_string_value(config, "CLAVE");
+	valor = config_get_string_value(config, "CLAVE");
 	ip = config_get_string_value(config, "IP");
 	puerto = config_get_string_value(config, "PUERTO");
 
@@ -35,13 +35,14 @@ int main(void)
 
 	// Loggeamos el valor de config
 	logger = iniciar_logger();
-	log_info(logger, valorConfig);
+	log_info(logger, valor);
 	log_info(logger, ip);
 	log_info(logger, puerto);
 
 
 	/* ---------------- LEER DE CONSOLA ---------------- */
 
+	log_info(logger, "Iniciando rutina de lectura de consola...");
 	leer_consola(logger);
 
 	/*---------------------------------------------------PARTE 3-------------------------------------------------------------*/
@@ -49,16 +50,20 @@ int main(void)
 	// ADVERTENCIA: Antes de continuar, tenemos que asegurarnos que el servidor esté corriendo para poder conectarnos a él
 
 	// Creamos una conexión hacia el servidor
+	log_info(logger, "Intentando conexion con servidor...");
 	conexion = crear_conexion(ip, puerto);
 
 	// Enviamos al servidor el valor de CLAVE como mensaje
 
-	enviar_mensaje(valor, socket_cliente);
+	log_info(logger, "Enviando clave de config a servidor...");
+	enviar_mensaje(valor, conexion);
 
 	// Armamos y enviamos el paquete
 
+	log_info(logger, "Iniciando rutina de empaquetamiento de mensajes...");
 	paquete(conexion);
 
+	log_info(logger, "Terminando programa...");
 	terminar_programa(conexion, logger, config);
 
 	/*---------------------------------------------------PARTE 5-------------------------------------------------------------*/
@@ -95,11 +100,11 @@ void leer_consola(t_log* logger)
 		if(!leido){
 			break;
 		}
-		log_info(logger,leido);
 		if (strcmp(leido, "") == 0){
 			free(leido);
 			return 0;
 		}
+		log_info(logger,leido);
 		free(leido);
 	}
 
@@ -120,16 +125,13 @@ void paquete(int conexion)
 		if(!leido){
 			break;
 		}
-
-		log_info(logger,leido);
-		agregar_a_paquete(paquete,leido,strlen(leido) + 1);
-
 		if (strcmp(leido, "") == 0){
 			free(leido);
 			enviar_paquete(paquete,conexion);
 			eliminar_paquete(paquete);
 			return 0;
 		}
+		agregar_a_paquete(paquete,leido,strlen(leido) + 1);
 		free(leido);
 	}
 

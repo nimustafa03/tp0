@@ -47,7 +47,7 @@ int esperar_cliente(int socket_servidor)
 	// Aceptamos un nuevo cliente
 	int socket_cliente, err;
 
-	int fd_conexion = accept(socket_servidor, NULL, NULL);
+	socket_cliente = accept(socket_servidor, NULL, NULL);
 	
 	log_info(logger, "Se conecto un cliente!");
 
@@ -81,7 +81,7 @@ void recibir_mensaje(int socket_cliente)
 {
 	int size;
 	char* buffer = recibir_buffer(&size, socket_cliente);
-	log_info(logger, "Me llego el mensaje %s", buffer);
+	log_info(logger, "Me llego el mensaje: \"%s\"", buffer);
 	free(buffer);
 }
 
