@@ -26,6 +26,7 @@ int main(void)
 	/* ---------------- ARCHIVOS DE CONFIGURACION ---------------- */
 
 	config = iniciar_config();
+	log_info(logger, "Config iniciada correctamente.");
 	valor = config_get_string_value(config, "CLAVE");
 	ip = config_get_string_value(config, "IP");
 	puerto = config_get_string_value(config, "PUERTO");
@@ -82,7 +83,9 @@ t_config* iniciar_config(void)
 	t_config* nuevo_config;
 	nuevo_config = config_create("cliente.config");
 	if (nuevo_config == NULL){
-		// NO SE PUDO CREAR EL CONFIG
+		t_log *nuevo_logger = iniciar_logger();
+		log_error(nuevo_logger,"NO SE PUDO CREAR EL CONFIG");
+		log_destroy(nuevo_logger);
 		abort();
 	}
 	return nuevo_config;
